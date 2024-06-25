@@ -1,1 +1,31 @@
 /* Posts Page CSS */
+/* body {
+    background-color: #6B4E90;
+}
+
+
+
+#cardOutput {
+    background-color: #6B4E90;
+}
+
+.card {
+    background-color: #6B4E90;
+}
+
+.form-control {
+
+    background-color: #8F78AD;
+}
+
+.btn{
+    background-color: #8F78AD;
+}
+ */
+
+ div.sticky {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    bottom: 0;
+
+  }

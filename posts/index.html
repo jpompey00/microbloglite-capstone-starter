@@ -1,6 +1,7 @@
 <!-- POSTS page -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,20 +25,158 @@
     <!-- Run BEFORE page is finished loading (before window.onload): -->
     <script src="../auth.js"></script>
     <script>
+        //Turn this on later or something. Anaylze this
         if (isLoggedIn() === false) window.location.replace("/");
     </script>
 </head>
+
 <body>
 
-    <header>
-        <h1>POSTS PAGE</h1>
+
+    <header class = "mt-2">
+        <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid justify-content-center">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../profile/">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <img src="../images/logo_small_square.png" width="50" height="50">
+                    </li>
+                    <li>
+                        <a class="nav-link active" aria-current="page" href="javascript:logout();">Logout?</a>
+
+                    </li>
+                </ul>
+
+
+            </div>
+        </nav> -->
+        <ul class="nav nav-tabs mx-2">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="../profile/">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="../posts/">Posts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:logout();">Logout</a>
+            </li>
+        </ul>
+
     </header>
 
-    <main></main>
+    <main class = "mx-2">
+        <!--Eventually Want this dropdown to appear when you press a button
+        And collapse horizontally-->
+        <div class = "d-flex flex-row-reverse ">
+            <select id="filterDropdown">
+                <option value = "numberOfLikes">Number of Likes</option>
+                <option value = "timePostedAscending">Time Posted Ascending</option>
+                <option value = "timePostedDescending">Time Posted Descending</option>
+            </select>
+        </div>
+
+        <!--For testing-->
+        <!-- <div class="container myPostBox position-fixed bottom-0 end-0 mb-3 me-3 z-3">
+            <div class="input-group">
+                <input id = "postTextInput" type="text" class="form-control">
+                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
+                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
+            </div>
+        </div> -->
+
+
+
+
+
+
+        <!--80% of the viewheight style="height: 80vh"-->
+        <div id = "objectScrollDiv"  class="">
+
+
+            <!--Outputs the Last 100 posts-->
+            <div id="cardOutput" class="container">
+
+                Card Start
+                <div class="card border-0"> 
+                    <div class="card-body">
+                        <div class="row"> <!--Row 1-->
+                            <div class="col-2"> <!--Col1>Row1-->
+                                <img src=".." class="card-img-top" alt="...">
+                            </div>
+                            <div class="col"> <!--Col2>Row1-->
+                                <div class="row"><!--Row1>Col2>Row1-->
+                                    <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                        <p id="cardTitle" class="card-title"><span class="h5">Full Name</span> <!--p>Col1>Row1>Col2>Row1-->
+                                            @Username</p>
+                                    </div>
+                                    <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                        <p class="fst-italic">Created At - Time</p> <!--p>Col2>Row1>Col2>Row1-->
+                                    </div>
+                                    <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                        <img src = "../assets/heart.svg" width="23px" height="23px"><span class = "fs-5"> 12</span> <!--p>Col3>Row1>Col2>Row1-->
+                                    </div>
+
+                                </div>
+                                <div class="row"> <!--Row2>Col2>Row1-->
+                                    <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                        <p id="cardBody" class="card-text">Post Test - Lorem ipsum dolor sit amet
+                                            consectetur
+                                            adipisicing elit.
+                                            Iusto debitis praesentium, totam blanditiis maiores, laborum nulla
+                                            voluptatem vitae,
+                                            molestiae non dolorum laboriosam fugit saepe. Quod nihil fuga libero
+                                            reiciendis
+                                            necessitatibus.</p> <!--p>Col1>Row2>Col2>Row1-->
+
+                                    </div>
+                                    <!--This is the X Icon. Do similar things for other parts of the code-->
+                                    <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                        <a href="../posts/"><!--a>Col2>Row2>Col2>Row1-->
+                                            <img id="xIconElement" class="icon" src="../assets/x-circle.svg"
+                                                width="25px" height="25px"> <!--Img>Col2>Row2>Col2>Row1-->
+                                        </a>
+                                    </div>
+                                    <!---------------------------------->
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!--Card End-->
+
+
+
+            </div>
+        </div>
+        <!--Make this Width Consistent-->
+        <!--Add Emojis if time permits-->
+        <!--Make it float-->
+        <!-- <div class="container mt-5 myPostBox affix">
+            <div class="input-group">
+                <input id = "postTextInput" type="text" class="form-control">
+                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
+                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
+            </div>
+        </div> -->
+        
+        <div class="container mt-5 myPostBox sticky z-3">
+            <div class="input-group pb-2">
+                <input id = "postTextInput" type="text" class="form-control">
+                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
+                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
+            </div>
+        </div>
+    </main>
 
     <footer></footer>
 
     <!-- Page-specific code -->
+     <script src = "../createCard.js"></script>
     <script src="./posts.js"></script>
 </body>
+
 </html>
