@@ -19,40 +19,80 @@
 
 body {
     /* background-color: #6A8AE1 ; */
-    background-color: #6A8AE1 ;
+    background-color: #6A8AE1;
 }
-main{
+
+main {
     background-color: #FFA341 !important;
 }
-nav{
+
+nav {
     background-color: #486ED5;
 }
 
 /*Maybe change this*/
-.myCardColor{
+.myCardColor {
     background-color: #6A8AE1;
 }
 
+.stickyNavBar {
+    position: -webkit-sticky;
+    /* Safari */
+    position: sticky;
+    top: 0;
 
-a.nav-link{
+}
+
+.orangeBackground{
+    background-color: #FFA341 !important;
+}
+
+.blueBackground{
+    background-color: #6A8AE1 !important;
+}
+.navbarBackground {
+    background-color: #6A8AE1;
+}
+
+a.nav-link {
     background-color: #FFCC96 !important;
     color: black !important;
 }
 
-a.nav-link.active{
+a.nav-link.active {
     background-color: #FFA341 !important;
     border-color: transparent !important;
 }
 
-a.nav-link.active:hover{
+a.nav-link.active:hover {
     background-color: #FFA341 !important;
 }
 
-a.nav-link:hover{
-    
+a.nav-link:hover {
+
     background-color: #FFA341 !important;
 }
 
-.postsContainer{
+.postsContainer {
     background-color: #6A8AE1 !important;
+}
+
+.lightOrangeFontColor{
+    color: #FFB568 !important; 
+}
+
+.orangeFontColor{
+    color: #FC8100 !important; 
+}
+
+.blueFontColor{
+    color: #0F38A9 !important;
+}
+
+.lightBlueFontColor{
+    color: #6A8AE1 !important;
+}
+
+.whitesmokeText{
+    color:rgb(214, 214, 214);
 }

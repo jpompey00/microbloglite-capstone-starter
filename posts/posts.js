@@ -54,24 +54,34 @@ async function populatePosts(sortedData = null) {
     let users = await getUsersAPICall();
     let postsData;
         //for (let d of data.slice().reverse())
-        let recentcard;
+    let recentcard;
     if(sortedData != null){
         postsData = sortedData;
     } else {
         postsData = await getPostsApiCall();
     }
     for (let d of postsData) {
+        let noMatches = true;
         // //may convert this to 24 hours
         // let time = Date.parse(d.createdAt);
         // const date = new Date(time);
         // console.log(`${date.getHours()}:${date.getMinutes()} ${date.getDay()}-${date.getMonth()}-${date.getFullYear()}`);
-        
         for (let u of users) {
             // console.log(u);
-            if (d.username == u.username) {
+            //TODO:getting an odd behavior there
+            /*
+            It should be printing it all out cause every post should have a username?
+            */
+            if (d.username == u.username) { 
                 recentcard = createCard(d, u.fullName);
                 cardOutput.appendChild(recentcard);
+                noMatches = false;
+                
             }
+        }
+        if(noMatches){
+            recentcard = createCard(d);
+            cardOutput.appendChild(recentcard);
         }
     }
 

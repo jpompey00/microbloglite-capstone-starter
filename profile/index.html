@@ -14,7 +14,7 @@
         crossorigin="anonymous"></script>
 
     <!-- Global CSS (CSS rules you want applied to all pages) -->
-    <!-- <link rel="stylesheet" href="./global.css"> -->
+    <link rel="stylesheet" href="./global.css">
 
     <!-- Page-specific CSS -->
     <link rel="stylesheet" href="profile.css">
@@ -30,40 +30,19 @@
 
 <body>
 
-    <!--navbar-nav me-auto mb-2 mb-lg-0-->
-    <!-- <nav class="navbar navbar-expand-lg pb-0">
-        <div class="container-fluid">
-            
-                
-            <ul class="nav nav-pills nav-fill ">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <img src="../images/logo_small_square.png" width="50" height="50">
-                </li>
-                <li>
-                    <a class="nav-link active" aria-current="page" href="javascript:logout();">Logout?</a>
-
-                </li>
-            </ul>
-
-
-        </div>
-    </nav> -->
-    <header class = "mt-2">
-    <ul class="nav nav-tabs mx-2">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Profile</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="../posts/">Posts</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:logout();">Logout</a>
-        </li>
-    </ul>
-
+    <header class = "mt-2 stickyNavBar z-3">
+        <div class ="navbarBackground">
+        <ul class="nav nav-tabs mx-2 ">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="../profile/">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../posts/">Posts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="javascript:logout();">Logout</a>
+            </li>
+        </ul>
     </header>
 
     <main class="mx-2 pb-4">

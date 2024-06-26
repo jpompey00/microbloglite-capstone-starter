@@ -1,9 +1,9 @@
 "use strict"
 
-const emailTextBox = document.getElementById('emailTextBox');
-const usernameTextBox = document.getElementById('usernameTextBox');
-const passwordTextBox = document.getElementById('passwordTextBox');
-const passwordConfirmTextBox = document.getElementById('passwordConfirmTextBox');
+const fullNameInputBox = document.getElementById('fullNameInputBox');
+const usernameInputBox = document.getElementById('usernameInputBox');
+const enterPasswordInputBox = document.getElementById('enterPasswordInputBox');
+const confirmPasswordInputBox = document.getElementById('confirmPasswordInputBox');
 const termsOfServiceCheckbox = document.getElementById('termsOfServiceCheckbox');
 const emailNotificationCheckbox = document.getElementById('emailNotificationCheckbox');
 const loginButton = document.getElementById('loginButton');

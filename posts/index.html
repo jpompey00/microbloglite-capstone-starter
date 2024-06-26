@@ -31,75 +31,51 @@
 </head>
 
 <body>
+    <!--I want this to stick too-->
+    <header class="mt-2 stickyNavBar z-3">
+        <div class="navbarBackground">
+            <ul class="nav nav-tabs mx-2 ">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="../profile/">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="../posts/">Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="javascript:logout();">Logout</a>
+                </li>
+            </ul>
 
-
-    <header class = "mt-2">
-        <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid justify-content-center">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="../profile/">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <img src="../images/logo_small_square.png" width="50" height="50">
-                    </li>
-                    <li>
-                        <a class="nav-link active" aria-current="page" href="javascript:logout();">Logout?</a>
-
-                    </li>
-                </ul>
-
-
+            <div class="d-flex flex-row-reverse mx-2 pb-2 filterBackground">
+                <select id="filterDropdown">
+                    <option value="">Filter</option>
+                    <option value="numberOfLikes">Number of Likes</option>
+                    <option value="timePostedAscending">Time Posted Ascending</option>
+                    <option value="timePostedDescending">Time Posted Descending</option>
+                </select>
             </div>
-        </nav> -->
-        <ul class="nav nav-tabs mx-2">
-            <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="../profile/">Profile</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="../posts/">Posts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="javascript:logout();">Logout</a>
-            </li>
-        </ul>
+        </div>
+        </div>
+
+
 
     </header>
 
-    <main class = "mx-2">
+    <main class="mx-2">
         <!--Eventually Want this dropdown to appear when you press a button
         And collapse horizontally-->
-        <div class = "d-flex flex-row-reverse ">
-            <select id="filterDropdown">
-                <option value = "numberOfLikes">Number of Likes</option>
-                <option value = "timePostedAscending">Time Posted Ascending</option>
-                <option value = "timePostedDescending">Time Posted Descending</option>
-            </select>
-        </div>
-
-        <!--For testing-->
-        <!-- <div class="container myPostBox position-fixed bottom-0 end-0 mb-3 me-3 z-3">
-            <div class="input-group">
-                <input id = "postTextInput" type="text" class="form-control">
-                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
-                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
-            </div>
-        </div> -->
-
-
-
 
 
 
         <!--80% of the viewheight style="height: 80vh"-->
-        <div id = "objectScrollDiv"  class="">
+        <div id="objectScrollDiv" class="">
 
 
             <!--Outputs the Last 100 posts-->
-            <div id="cardOutput" class="container">
+            <div id="cardOutput" class="container rounded">
 
                 Card Start
-                <div class="card border-0"> 
+                <div class="card border-0">
                     <div class="card-body">
                         <div class="row"> <!--Row 1-->
                             <div class="col-2"> <!--Col1>Row1-->
@@ -108,14 +84,16 @@
                             <div class="col"> <!--Col2>Row1-->
                                 <div class="row"><!--Row1>Col2>Row1-->
                                     <div class="col"><!--Col1>Row1>Col2>Row1-->
-                                        <p id="cardTitle" class="card-title"><span class="h5">Full Name</span> <!--p>Col1>Row1>Col2>Row1-->
+                                        <p id="cardTitle" class="card-title"><span class="h5">Full Name</span>
+                                            <!--p>Col1>Row1>Col2>Row1-->
                                             @Username</p>
                                     </div>
                                     <div class="col"> <!--Col2>Row1>Col2>Row1-->
                                         <p class="fst-italic">Created At - Time</p> <!--p>Col2>Row1>Col2>Row1-->
                                     </div>
                                     <div class="col"> <!--Col3>Row1>Col2>Row1-->
-                                        <img src = "../assets/heart.svg" width="23px" height="23px"><span class = "fs-5"> 12</span> <!--p>Col3>Row1>Col2>Row1-->
+                                        <img src="../assets/heart.svg" width="23px" height="23px"><span class="fs-5">
+                                            12</span> <!--p>Col3>Row1>Col2>Row1-->
                                     </div>
 
                                 </div>
@@ -155,27 +133,22 @@
         <!--Make this Width Consistent-->
         <!--Add Emojis if time permits-->
         <!--Make it float-->
-        <!-- <div class="container mt-5 myPostBox affix">
-            <div class="input-group">
-                <input id = "postTextInput" type="text" class="form-control">
-                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
-                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
-            </div>
-        </div> -->
-        
-        <div class="container mt-5 myPostBox sticky z-3">
-            <div class="input-group pb-2">
-                <input id = "postTextInput" type="text" class="form-control">
-                <button id="attatchmentButton" class="btn btn-outline-black" type="button">Attatchment</button>
-                <button id="sendButton" class="btn btn-outline-black" type="button">Send</button>
+
+
+        <div class="container mt-2 myPostBox stickyInput z-3 p-3">
+            <div class="input-group ">
+                <input id="postTextInput" type="text" class="form-control">
+                <button id="attatchmentButton" class="btn btnCustomColor" type="button">Attatchment</button>
+                <button id="sendButton" class="btn btn-primary" type="button">Send</button>
             </div>
         </div>
+
     </main>
 
     <footer></footer>
 
     <!-- Page-specific code -->
-     <script src = "../createCard.js"></script>
+    <script src="../createCard.js"></script>
     <script src="./posts.js"></script>
 </body>
 
