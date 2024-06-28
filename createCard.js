@@ -1,7 +1,14 @@
 
+const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+
+const errorOutputMessage = document.getElementById("errorOutputMessage");
+
 
 //I hate this
-function createCard(data, fullName = "FIXME", imageSrc = "...") {
+function createCard(data, fullName = null, imageSrc = "...") {
     currentUserUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 
     const cardDiv = document.createElement("div");
@@ -57,10 +64,17 @@ function createCard(data, fullName = "FIXME", imageSrc = "...") {
     timeOfCreation.classList.add("fst-italic");
     let time = Date.parse(data.createdAt);
     const date = new Date(time);
-
+    const twelveHourTimeString = date.toLocaleTimeString('en-US',
+        {
+            timeZone: 'ETC/GMT+4', //odd
+            hour12: true,
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+    const dateString = `${months[date.getMonth()]}/${date.getDate()}/${date.getFullYear()}`
     //TODO: The dates are wrong lmao
-    let createdAt = `${date.getHours()}:${date.getMinutes()} ${date.getDay() + 1}-${date.getMonth() + 1}-${date.getFullYear()}`;
-    timeOfCreation.innerHTML = `Created At - ${createdAt}`;
+    let createdAt = `${dateString} ${twelveHourTimeString}`;
+    timeOfCreation.innerHTML = `${createdAt}`;
     colDiv2RowDiv1ColDiv2.appendChild(timeOfCreation);
 
     const colDiv3RowDiv1ColDiv2 = document.createElement("div");
@@ -187,7 +201,6 @@ function createCard(data, fullName = "FIXME", imageSrc = "...") {
 }
 
 
-
 async function addLikeCall(data) { //FIXME:not exactly working
     let bodyData = {
         "postId": `${data._id}`
@@ -200,11 +213,20 @@ async function addLikeCall(data) { //FIXME:not exactly working
                 Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
                 "Content-type": "application/json; charset=UTF-8"
             }
-
         })
-        .then(response => response.json())
+        .then(response => {
+            if(response.status != 201){
+                throw error;
+            } else {
+                return response.json();
+            }
+        })
         .then(result => {
             console.log("completed")
+        })
+        .catch(error => {
+            errorOutputMessage.style = "display: block";
+            errorOutputMessage.innerHTML = "Oops! Looks like our owl got cold feet. Try liking again later!"
         })
 
 }
@@ -222,9 +244,19 @@ async function removeLikeCall(data) {
                         Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if(response.status != 202){
+                        throw error;
+                    } else {
+                        return response.json();
+                    }
+                })
                 .then(data => {
                     console.log(data);
+                })
+                .catch(error => {
+                    errorOutputMessage.style = "display: block";
+                    errorOutputMessage.innerHTML = "Uh-oh! That like must be stuck like an owl on a branch. We'll try to pry it off later!";
                 })
         }
     }
@@ -250,10 +282,20 @@ async function updateDataFetch(postId) {
             "Content-type": "application/json; charset=UTF-8"
         }
     })
-        .then(response => response.json())
+        .then(response =>{
+            if(response.status != 200){
+                throw error;
+            } else {
+                return response.json();
+            }
+        })
         .then(data => {
             console.log("completed");
             returnData = data;
+        })
+        .catch(error => {
+            errorOutputMessage.style = "display: block";
+            errorOutputMessage.innerHTML = "Oops! Looks like the data took flight. It might be lost in the night—please try again later!";
         })
 
     return returnData;

@@ -23,13 +23,14 @@
 }
  */
 
+
+
  div.stickyInput {
     position: -webkit-sticky; /* Safari */
     position: sticky;
     bottom: 0;
 
   }
-
 
 
   div.myPostBox{

@@ -1,9 +1,5 @@
 /* Posts Page JavaScript */
 
-//TODO: DELETE WHEN DONE
-//TEST TOKEN, IMPORTANT, DELETE
-//"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyMDEwMjAxMjMwMSIsImlhdCI6MTcxOTE0ODUwNywiZXhwIjoxNzE5MjM0OTA3fQ.Pkr0BTK-1Lbx8xnIIG1ckt8jTUIrHC8PS1kH3EPvnfo"
-
 
 
 "use strict";
@@ -12,32 +8,39 @@ const attatchmentButton = document.getElementById("attatchmentButton");
 const sendButton = document.getElementById("sendButton");
 const xIconElement = document.getElementById("xIconElement");
 const postTextInput = document.getElementById("postTextInput");
-const objectScrollDiv = document.getElementById("objectScrollDiv");
-const filterDropdown = document.getElementById("filterDropdown");
-//API Values
-// const API_BASE_URL = "http://microbloglite.us-east-2.elasticbeanstalk.com";
+
+//yea
+const timeDescending = document.getElementById("timeDescending");
+const timeAscending = document.getElementById("timeAscending");
+const numberOfLikes = document.getElementById("numberOfLikes");
 
 
 window.onload = async () => {
     console.log("connected");
-    window.addEventListener("reloadPosts", getPostsApiCall, false);
-    // console.log(JSON.parse(window.localStorage.getItem("login-data")).token);
 
-    populatePosts();
+
+    //TODO:how does this work again
+    window.addEventListener("reloadPosts", getPostsApiCall, false);
+    //populatePosts();
+    //This works, add 300ms wait.
+   setTimeout(populatePosts, 300);
+  
 
     //FIXME: This needs to scroll to the bottom, it only does that if save this document
     //when i'm not on the page. See Solution in PopulatePostAPICall
     //FIXME: the display of the posts in reverse when this is resolved
-    scrollToBottom(objectScrollDiv);
+    //Use an Anchor.
 
 
-    xIconElement.onmouseenter = onXIconElementMouseEnter;
-    xIconElement.onmouseleave = onXIconElementMouseLeave;
-    // createPostApiCall("TestPost3");
+
     sendButton.onclick = onSendButtonClick;
-    filterDropdown.onchange = onFilterDropdownChange;
+
+    timeDescending.onclick = () => filterChange("timePostedDescending")
+    timeAscending.onclick = () => filterChange("timePostedAscending")
+    numberOfLikes.onclick = () => filterChange("numberOfLikes")
 
 }
+
 
 
 function onXIconElementMouseEnter() {
@@ -49,42 +52,39 @@ function onXIconElementMouseLeave() {
 }
 
 
+//Fixed
 async function populatePosts(sortedData = null) {
-    cardOutput.innerHTML = "";
+
     let users = await getUsersAPICall();
     let postsData;
-        //for (let d of data.slice().reverse())
     let recentcard;
-    if(sortedData != null){
+    if (sortedData != null) {
         postsData = sortedData;
     } else {
         postsData = await getPostsApiCall();
+
     }
-    for (let d of postsData) {
+    cardOutput.innerHTML = "";
+    for (let d of postsData.slice().reverse()) {
+
         let noMatches = true;
-        // //may convert this to 24 hours
-        // let time = Date.parse(d.createdAt);
-        // const date = new Date(time);
-        // console.log(`${date.getHours()}:${date.getMinutes()} ${date.getDay()}-${date.getMonth()}-${date.getFullYear()}`);
         for (let u of users) {
-            // console.log(u);
-            //TODO:getting an odd behavior there
-            /*
-            It should be printing it all out cause every post should have a username?
-            */
-            if (d.username == u.username) { 
+            if (d.username == u.username) {
                 recentcard = createCard(d, u.fullName);
                 cardOutput.appendChild(recentcard);
                 noMatches = false;
-                
+
             }
         }
-        if(noMatches){
-            recentcard = createCard(d);
+        if (noMatches) {
+            recentcard = createCard(d, d.username);
             cardOutput.appendChild(recentcard);
         }
+
     }
 
+    //issue: Is scrolling once, then again when reloaded. Its a bit jarring.
+    scrollToBottom();
 }
 
 //I think this works
@@ -96,67 +96,95 @@ async function getPostsApiCall() {
             headers: {
                 Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
             }
-        }
-    )
-        .then(response => response.json())
+        })
+        .then(response => {
+            if (response.status == 400) {
+                throw error;
+            } else {
+                return response.json()
+            }
+        })
         .then(data => {
-
             dataToReturn = data;
         })
+        .catch(error => {
+            let p = document.createElement("p")
+            p.classList.add("text-danger", "h4");
+            p.innerHTML = "Oops! Looks like our owls are taking a nap. Please perch yourself elsewhere and try hooting again later!"
+            cardOutput.appendChild(p);
+        })
+
 
     return dataToReturn;
 }
 
 
-function createPostApiCall(postString) {
+async function createPostApiCall(postString) {
+    errorOutputMessage.style = "display: none;";
+    let boolOutput;
     let postJson = {
         "text": `${postString}`
     }
 
-    fetch(apiBaseURL + "/api/posts", {
+    await fetch(apiBaseURL + "/api/posts", {
         method: "POST",
         body: JSON.stringify(postJson),
         headers: {
             Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
             "Content-type": "application/json; charset=UTF-8"
         }
-    }).then(response => response.json())
+    }).then(response => {
+        if (response.status != 201) {
+            throw error
+        } else {
+            return response.json()
+        }
+    })
         .then(data => {
-            console.log(data);
+            boolOutput = true;
+            // console.log(data);
         })
+        .catch(error => {
+            errorOutputMessage.style = "display: block;";
+            errorOutputMessage.innerHTML = "Whoops-a-daisy! Your post got tangled in the owl's nest. Give it another hoot!";
+            boolOutput = false;
+        })
+
+    return boolOutput;
 }
 
-//have this activate on pressing enter as well
+//TODO: have this activate on pressing enter as well
 async function onSendButtonClick() {
     //add more catches for when its blank, like if they add a bunch of spaces with no
     //characters
     if (postTextInput.value.trim() !== "") {
-        await createPostApiCall(postTextInput.value);
-        postTextInput.value = "";
-        populatePosts(await getPostsApiCall());
+        if (await createPostApiCall(postTextInput.value)) { //makes sure the fetch has worked before reloading page.
+            postTextInput.value = "";
+            populatePosts(await getPostsApiCall());
+        }
     }
 }
 
+//TODO: Fix
+function scrollToBottom() {
 
-function scrollToBottom(element) {
-    requestAnimationFrame(() => {
-        element.scrollTop = element.scrollHeight;
-    });
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
-async function onFilterDropdownChange() {
+//TODO: make sure works
+async function filterChange(value) {
     let sortedData = await getPostsApiCall();
-    switch (filterDropdown.value) {
+    switch (value) {
         case "numberOfLikes":
             sortedData.sort((a, b) => b.likes.length - a.likes.length);
             populatePosts(sortedData);
             break;
         case "timePostedAscending":
-            sortedData.sort((a,b) => a.createdAt.localeCompare(b.createdAt));
+            sortedData.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
             populatePosts(sortedData);
             break;
         case "timePostedDescending":
-            sortedData.sort((a,b) => b.createdAt.localeCompare(a.createdAt));
+            sortedData.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
             populatePosts(sortedData);
             break;
     }
@@ -164,8 +192,31 @@ async function onFilterDropdownChange() {
 }
 
 
-
+//works
 async function getUsersAPICall() {
+    let nullData = [
+        {
+            fullname: null,
+            bio: null,
+            createdAt: null,
+            username: null,
+            updatedAt: null,
+        },
+        {
+            fullname: null,
+            bio: null,
+            createdAt: null,
+            username: null,
+            updatedAt: null,
+        },
+        {
+            fullname: null,
+            bio: null,
+            createdAt: null,
+            username: null,
+            updatedAt: null,
+        },
+    ]
     let dataToReturn;
     await fetch(apiBaseURL + "/api/users",
         {
@@ -173,12 +224,36 @@ async function getUsersAPICall() {
             headers: {
                 Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
             }
-        }
-    )
-        .then(response => response.json())
+        })
+        .then(response => {
+            if (response.status != 200) {
+                throw error;
+            } else {
+                return response.json();
+            }
+        })
         .then(users => {
+
             dataToReturn = users;
+        })
+        .catch(error => {
+            dataToReturn = nullData;
         })
 
     return dataToReturn;
 }
+
+
+
+//replying to posts
+//add an anchor with a FA reply icon
+//when you click on it, it puts the @[string] in the input box
+//When the message is sent, if the message has @[] and whatever is inside the []
+//will be read as a link that sends you to that message. Use Message ID or the like for this. 
+
+//uploading attatchment
+//upload image to separate folder then display that
+
+//view other profiles
+//load their info in the profile page maybe using the URL bullshit
+

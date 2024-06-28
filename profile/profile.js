@@ -12,6 +12,9 @@ const bioInputDiv = document.getElementById("bioInputDiv");
 const passwordInputDiv = document.getElementById("passwordInputDiv");
 const fullNameInputDiv = document.getElementById("fullNameInputDiv");
 
+const profileErrorOutputMessage = document.getElementById("profileErrorOutputMessage");
+const createPostButton = document.getElementById("createPostButton");
+
 //the span is what holds the info
 const profileUsernameSpan = document.getElementById("profileUsernameSpan");
 //this only holds the @ lmao
@@ -26,7 +29,8 @@ const confirmChangePasswordInputBox = document.getElementById("confirmChangePass
 
 let currentUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 let currentUserFullName;
-// let testUser = "DonnyA";
+
+
 
 let option = {
     method: "GET",
@@ -36,6 +40,8 @@ let option = {
 }
 
 //TODO:
+//NOT STYLING HOW I WANT IT. ASK! 
+//LAST ROUND OF FORMATTING!
 //Fix the posts not updating when I like or unlike a post.
 //Edit the profile 
 window.onload = () => {
@@ -45,8 +51,9 @@ window.onload = () => {
     console.log("connected");
     loadFullName();
     loadPersonalInfo();
-    loadPosts();
-    loadLikedPosts();
+
+    setTimeout(loadPosts, 300);
+    setTimeout(loadLikedPosts, 300);
 
 
     //button events
@@ -96,22 +103,36 @@ async function updateUser(username, body){
             "Content-type": "application/json; charset=UTF-8"
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if(response.status >=200 && response.status < 300){
+            return response.json();       
+        } else {
+            throw error;
+        }
+    })
     .then(data => {
+        errorOutputMessage.style = "display: none";
         console.log(data);
+
     }) 
+    .catch(error => { //doesn't tell you what the issue is entirely
+        errorOutputMessage.style = "display: block";
+        errorOutputMessage.innerHTML = "Trouble Updating User";
+
+    })
 }
-
-
-
-
-
 
 
 //so other functions can access the firstName without needing to call this API themselves or looping
 //through the user array to find it.
 async function loadFullName() { 
     let users = await getUsersAPI();
+    if(!users){
+        // console.log("test?")
+        errorOutputMessage.style = "display: block";
+        errorOutputMessage.innerHTML = "Whoops! Our owls are having trouble finding your name. It might be hiding in the treetops—try again later!";
+        return
+    }
     for (let u of users) {
         if (u.username == currentUsername) {
             currentUserFullName = u.fullName;
@@ -120,13 +141,37 @@ async function loadFullName() {
     }
 }
 
+
 async function loadPersonalInfo() {
     let data = await callAPIGetSpecificUser();
-    console.log(typeof (data.fullName));
+    if(!data){
+        profileFullNameTextBox.innerHTML = "";
+        profileUsernameTextbox.innerHTML = "";
+        memberSinceTextBox.innerHTML = "";
+        bioOutputTextBox.innerHTML = "";
+        profileErrorOutputMessage.style = "display: block"
+        profileErrorOutputMessage.innerHTML = "Uh-oh! Your personal info might have flown the coop. It’s probably out there somewhere. Try again later!";
+
+        editProfileInfoButton.disabled = true;
+        return
+    }
+    // console.log(typeof (data.fullName));
     profileFullNameTextBox.innerHTML = data.fullName;
     //maybe have this an achor to take you to other pages.
     profileUsernameSpan.innerHTML = `${data.username}`;
-    memberSinceTextBox.innerHTML = data.createdAt;
+    let time = Date.parse(data.createdAt);
+    const date = new Date(time);
+    const twelveHourTimeString = date.toLocaleTimeString('en-US',
+        {
+            timeZone: 'ETC/GMT+4', //odd
+            hour12: true,
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+    const dateString = `${months[date.getMonth()]}/${date.getDate()}/${date.getFullYear()}`
+    let createdAt = `${dateString} ${twelveHourTimeString}`;
+
+    memberSinceTextBox.innerHTML =`Joined:  ${createdAt}` ;
 
     // console.log(data.bio);
     bioOutputTextBox.innerHTML = data.bio;
@@ -134,10 +179,18 @@ async function loadPersonalInfo() {
 }
 
 async function loadPosts() {
-    postsOutputContainer.innerHTML = "";
+    
     let data = await callAPIGetPosts();
-
+    postsOutputContainer.innerHTML = "";
+    if(!data){
+        let p = document.createElement("p");
+        p.classList.add("text-danger", "h5")
+        p.innerHTML = "Whoops-a-daisy! Your post got tangled in the owl's nest. Give it another hoot!";
+        postsOutputContainer.appendChild(p);
+        return
+    }
     for (let d of data) {
+        
         if (d.username == currentUsername) {
 
             postsOutputContainer.appendChild(
@@ -148,8 +201,16 @@ async function loadPosts() {
 }
 
 async function loadLikedPosts() {
-    likedPostsOutputContainer.innerHTML = ""
+    
     let data = await callAPIGetPosts();
+    likedPostsOutputContainer.innerHTML = "";
+    if(!data){
+        let p = document.createElement("p");
+        p.classList.add("text-danger", "h5")
+        p.innerHTML = "Whoops-a-daisy! Your post got tangled in the owl's nest. Give it another hoot!";
+        likedPostsOutputContainer.appendChild(p);
+        return
+    }
     for (let d of data) {
         for (let l of d.likes) {
             if (l.username == currentUsername) {
@@ -161,22 +222,52 @@ async function loadLikedPosts() {
     }
 }
 
-function callAPIGetPosts() {
-    return fetch(apiBaseURL + `/api/posts`, option)
-        .then(response => response.json())
-        .then(data => data)
+async function callAPIGetPosts() {
+    return await fetch(apiBaseURL + `/api/posts`, option)
+        .then(response => {
+            if(response.status >=200 && response.status < 300){
+                return response.json();       
+            } else {
+                throw error;
+            }
+        })
+        .then(data => {
+           
+           
+            return data})
+        .catch(error => {
+            return null;
+        })
 }
 
-function callAPIGetSpecificUser() { //i'd prefer to separate the api calls like this for all of them
-    return fetch(apiBaseURL + `/api/users/${currentUsername}`, option)
-        .then(response => response.json())
-        .then(data => data);
+async function callAPIGetSpecificUser() { //i'd prefer to separate the api calls like this for all of them
+    return await fetch(apiBaseURL + `/api/users/${currentUsername}`, option)
+        .then(response => {
+            if(response.status >=200 && response.status < 300){
+                return response.json();       
+            } else {
+                throw error;
+            }
+        })
+        .then(data => data)
+        .catch(error => {
+            return null
+        })
 }
 
 async function getUsersAPI() {
     return await fetch(apiBaseURL + '/api/users', option)
-        .then(response => response.json())
-        .then(data => data)
+        .then(response => {
+            if(response.status >=200 && response.status < 300){
+                return response.json();       
+            } else {
+                throw error;
+            }
+        })
+        .then(data =>data)
+        .catch(error => {
+            return null
+        })
 }
 
 

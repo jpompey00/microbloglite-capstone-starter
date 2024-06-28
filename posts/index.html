@@ -13,14 +13,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
 
     <!-- Global CSS (CSS rules you want applied to all pages) -->
-    <link rel="stylesheet" href="../global.css">
 
+    <link rel="stylesheet" href="../global.css">
     <!-- Page-specific CSS -->
     <link rel="stylesheet" href="./posts.css">
 
+
     <title>/POSTS</title>
+
 
     <!-- Run BEFORE page is finished loading (before window.onload): -->
     <script src="../auth.js"></script>
@@ -28,9 +33,10 @@
         //Turn this on later or something. Anaylze this
         if (isLoggedIn() === false) window.location.replace("/");
     </script>
+
 </head>
 
-<body>
+<body >
     <!--I want this to stick too-->
     <header class="mt-2 stickyNavBar z-3">
         <div class="navbarBackground">
@@ -46,96 +52,408 @@
                 </li>
             </ul>
 
-            <div class="d-flex flex-row-reverse mx-2 pb-2 filterBackground">
-                <select id="filterDropdown">
-                    <option value="">Filter</option>
-                    <option value="numberOfLikes">Number of Likes</option>
-                    <option value="timePostedAscending">Time Posted Ascending</option>
-                    <option value="timePostedDescending">Time Posted Descending</option>
-                </select>
+            <div class="d-flex flex-row-reverse mx-2 pb-2 filterBackground dropdown">
+
+
+                <img src="../assets/filter.svg" width="50" height="50" class="btn btn-secondary dropdown-toggle blueBackground mt-3 me-5" type="button"
+                    data-bs-toggle="dropdown">
+                <ul class="dropdown-menu">
+                    <li><a id="timeDescending" class="dropdown-item" href="#">Time Posted Descending</a></li>
+                    <li><a id="timeAscending" class="dropdown-item" href="#">Time Posted Ascending</a></li>
+                    <li><a id="numberOfLikes" class="dropdown-item" href="#">Number of Likes</a></li>
+                </ul>
+
             </div>
         </div>
         </div>
-
 
 
     </header>
 
-    <main class="mx-2">
-        <!--Eventually Want this dropdown to appear when you press a button
-        And collapse horizontally-->
+
+
+    <main id="main" class="mx-2 rounded">
 
 
 
         <!--80% of the viewheight style="height: 80vh"-->
-        <div id="objectScrollDiv" class="">
 
 
-            <!--Outputs the Last 100 posts-->
-            <div id="cardOutput" class="container rounded">
 
-                Card Start
-                <div class="card border-0">
-                    <div class="card-body">
-                        <div class="row"> <!--Row 1-->
-                            <div class="col-2"> <!--Col1>Row1-->
-                                <img src=".." class="card-img-top" alt="...">
-                            </div>
-                            <div class="col"> <!--Col2>Row1-->
-                                <div class="row"><!--Row1>Col2>Row1-->
-                                    <div class="col"><!--Col1>Row1>Col2>Row1-->
-                                        <p id="cardTitle" class="card-title"><span class="h5">Full Name</span>
-                                            <!--p>Col1>Row1>Col2>Row1-->
-                                            @Username</p>
-                                    </div>
-                                    <div class="col"> <!--Col2>Row1>Col2>Row1-->
-                                        <p class="fst-italic">Created At - Time</p> <!--p>Col2>Row1>Col2>Row1-->
-                                    </div>
-                                    <div class="col"> <!--Col3>Row1>Col2>Row1-->
-                                        <img src="../assets/heart.svg" width="23px" height="23px"><span class="fs-5">
-                                            12</span> <!--p>Col3>Row1>Col2>Row1-->
-                                    </div>
+        <!--Outputs the Last 100 posts-->
+        <div id="cardOutput" class="container rounded">
 
-                                </div>
-                                <div class="row"> <!--Row2>Col2>Row1-->
-                                    <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
-                                        <p id="cardBody" class="card-text">Post Test - Lorem ipsum dolor sit amet
-                                            consectetur
-                                            adipisicing elit.
-                                            Iusto debitis praesentium, totam blanditiis maiores, laborum nulla
-                                            voluptatem vitae,
-                                            molestiae non dolorum laboriosam fugit saepe. Quod nihil fuga libero
-                                            reiciendis
-                                            necessitatibus.</p> <!--p>Col1>Row2>Col2>Row1-->
-
-                                    </div>
-                                    <!--This is the X Icon. Do similar things for other parts of the code-->
-                                    <div class="col-3"><!--Col2>Row2>Col2>Row1-->
-                                        <a href="../posts/"><!--a>Col2>Row2>Col2>Row1-->
-                                            <img id="xIconElement" class="icon" src="../assets/x-circle.svg"
-                                                width="25px" height="25px"> <!--Img>Col2>Row2>Col2>Row1-->
-                                        </a>
-                                    </div>
-                                    <!---------------------------------->
-                                </div>
-
-                            </div>
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
                         </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
 
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
                     </div>
+
                 </div>
-                <!--Card End-->
-
-
-
             </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+            <!-- Placeholder Card Start -->
+            <div class="card border-0 myCardColor">
+                <div class="card-body placeholder-glow">
+                    <div class="row"> <!--Row 1-->
+                        <div class="col-2"> <!--Col1>Row1-->
+                            <img src="../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg"
+                                height="180" class="card-img-top" alt="...">
+                        </div>
+                        <div class="col"> <!--Col2>Row1-->
+                            <div class="row"><!--Row1>Col2>Row1-->
+                                <div class="col"><!--Col1>Row1>Col2>Row1-->
+                                    <p id="cardTitle" class="card-title "><span class="placeholder col-8"></span>
+                                        <!--p>Col1>Row1>Col2>Row1-->
+                                        <span class="placeholder col-3"></span>
+                                    </p>
+                                </div>
+                                <div class="col"> <!--Col2>Row1>Col2>Row1-->
+                                    <p class="fst-italic"><span class="placeholder col-5"></span></p>
+                                    <!--p>Col2>Row1>Col2>Row1-->
+                                </div>
+                                <div class="col"> <!--Col3>Row1>Col2>Row1-->
+                                    <span class="placeholder col-2"></span><!--p>Col3>Row1>Col2>Row1-->
+                                </div>
+
+                            </div>
+                            <div class="row"> <!--Row2>Col2>Row1-->
+                                <div class="col-9"> <!--Col1>Row2>Col2>Row1-->
+                                    <span class="placeholder col-12"></span><!--p>Col1>Row2>Col2>Row1-->
+                                    <br><span class="placeholder col-12"></span>
+                                    <br><span class="placeholder col-12"></span>
+                                </div>
+                                <!--This is the X Icon. Do similar things for other parts of the code-->
+                                <div class="col-3"><!--Col2>Row2>Col2>Row1-->
+                                    <span class="placeholder col-2"></span>
+                                </div>
+                                <!---------------------------------->
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--Card End-->
+
+
+
         </div>
+
         <!--Make this Width Consistent-->
         <!--Add Emojis if time permits-->
         <!--Make it float-->
 
 
         <div class="container mt-2 myPostBox stickyInput z-3 p-3">
+            <p id="errorOutputMessage" class="h4 text-danger" style="display: none;"></p>
             <div class="input-group ">
                 <input id="postTextInput" type="text" class="form-control">
                 <button id="attatchmentButton" class="btn btnCustomColor" type="button">Attatchment</button>
@@ -150,6 +468,7 @@
     <!-- Page-specific code -->
     <script src="../createCard.js"></script>
     <script src="./posts.js"></script>
+
 </body>
 
 </html>
