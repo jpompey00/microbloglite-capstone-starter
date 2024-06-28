@@ -17,7 +17,7 @@ const createPostButton = document.getElementById("createPostButton");
 
 //the span is what holds the info
 const profileUsernameSpan = document.getElementById("profileUsernameSpan");
-//this only holds the @ lmao
+//this only holds the @ 
 const profileUsernameTextbox = document.getElementById("profileUsernameTextbox");
 
 //input fields
@@ -30,7 +30,6 @@ const confirmChangePasswordInputBox = document.getElementById("confirmChangePass
 let loggedInUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 let currentUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 let currentUserFullName;
-let placeholderImage = "../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg";
 
 
 let option = {
@@ -42,16 +41,18 @@ let option = {
 
 
 window.onload = () => {
+    //The search params so other profiles can be loaded
     const urlParams = new URLSearchParams(location.search);
 
-    //loads other pages. I'm so good
+    //If there are no params it will load the users profile page
     if (urlParams.has("username") == true) {
         currentUsername = urlParams.get("username");
     }
 
     //not sure why i need "false" here
+    //adding the event listener
     window.addEventListener("reloadPosts", loadPosts, false);
-    // console.log(testUsername);
+
 
     loadFullName();
     loadPersonalInfo();
@@ -59,12 +60,12 @@ window.onload = () => {
     setTimeout(loadPosts, 300);
     setTimeout(loadLikedPosts, 300);
 
+    //if the logged in user is viewing anothe profile, the option to create a post or edit is gone.
     if (currentUsername != loggedInUsername) {
         editProfileInfoButton.style = "display: none";
         createPostButton.style = "display: none";
     }
     else {
-        //button events
         editProfileInfoButton.onclick = onEditProfileInfoButtonClick;
         saveEditedInfoButton.onclick = onSaveEditedInfoButtonClick;
     }
@@ -91,6 +92,7 @@ function onEditProfileInfoButtonClick() {
     saveEditedInfoButton.style = "display: inline-block"
 }
 
+//resets the section and reloads the information
 function onSaveEditedInfoButtonClick() {
     let body = {
         "password": `${changePasswordInputBox.value}`,
@@ -98,11 +100,29 @@ function onSaveEditedInfoButtonClick() {
         "bio": `${bioInputBox.value}`
     }
     updateUser(currentUsername, body);
-    //need a function to update the page.
+    
+    fullNameInputDiv.style = "display: none";
+    profileFullNameInputBox.style = "display: none";
+    profileFullNameTextBox.style = "display: block";
+
+    passwordInputDiv.style = "display: none"
+    changePasswordInputBox.style = "display: none";
+    confirmChangePasswordInputBox.style = "display: none";
+
+    bioInputDiv.style = "display: none";
+
+    bioOutputTextBox.style = "display:block"
+
+    editProfileInfoButton.style = "display: inline-block";
+    saveEditedInfoButton.style = "display: none"
+
+    loadFullName();
+    loadPersonalInfo();
+    
 }
 
 
-
+//the API call for the user
 async function updateUser(username, body) {
     fetch(apiBaseURL + "/api/users/" + username, {
         method: "PUT",
@@ -132,8 +152,7 @@ async function updateUser(username, body) {
 }
 
 
-//so other functions can access the firstName without needing to call this API themselves or looping
-//through the user array to find it.
+//Frankly I don't know why I did it like this, i think it was for loading the full name in the posts.
 async function loadFullName() {
     let users = await getUsersAPI();
     if (!users) {
@@ -153,7 +172,7 @@ async function loadFullName() {
 
 async function loadPersonalInfo() {
     let data = await callAPIGetSpecificUser();
-    if (!data) {
+    if (!data) { //error message
         profileFullNameTextBox.innerHTML = "";
         profileUsernameTextbox.innerHTML = "";
         memberSinceTextBox.innerHTML = "";
@@ -166,9 +185,9 @@ async function loadPersonalInfo() {
     }
     console.log(data);
     profileImageElement.src = assignPicture(data.username);
-    // console.log(typeof (data.fullName));
+   
     profileFullNameTextBox.innerHTML = data.fullName;
-    //maybe have this an achor to take you to other pages.
+    
     profileUsernameSpan.innerHTML = `${data.username}`;
     let time = Date.parse(data.createdAt);
     const date = new Date(time);
@@ -184,7 +203,6 @@ async function loadPersonalInfo() {
 
     memberSinceTextBox.innerHTML = `Joined:  ${createdAt}`;
 
-    // console.log(data.bio);
     bioOutputTextBox.innerHTML = data.bio;
 
 }
@@ -205,14 +223,15 @@ async function loadPosts() {
         if (d.username == currentUsername) {
 
             postsOutputContainer.appendChild(
-                createCard(d, currentUserFullName, placeholderImage)
+                createCard(d, currentUserFullName)
             );
         }
     }
 }
 
 async function loadLikedPosts() {
-
+    let matchFound = false;
+    let users = await getUsersAPI();
     let data = await callAPIGetPosts();
     likedPostsOutputContainer.innerHTML = "";
     if (!data) {
@@ -223,16 +242,31 @@ async function loadLikedPosts() {
         return
     }
     for (let d of data) {
-        for (let l of d.likes) {
+        for (let l of d.likes) { //checks if I'm included in the list of likes
             if (l.username == currentUsername) {
-                //will need its own card for this too
-                likedPostsOutputContainer.appendChild(createCard(d, currentUserFullName, placeholderImage));
-
+                //this was all to load the first names into the post
+                //very odd way I went about this, but had to set a flag to see if a match was found in the loop
+                for(let u of users){
+                    if(d.username == u.username){
+                        likedPostsOutputContainer.appendChild(createCard(d, u.fullName));
+                        matchFound = true;
+                        break;
+                    }
+                   
+                }
+                if(matchFound == false){
+                    likedPostsOutputContainer.appendChild(createCard(d, d.username));
+                }    
+                //resets flag
+                matchFound = false;
             }
         }
     }
 }
 
+
+
+//API Calls
 async function callAPIGetPosts() {
     return await fetch(apiBaseURL + `/api/posts`, option)
         .then(response => {
@@ -252,7 +286,7 @@ async function callAPIGetPosts() {
         })
 }
 
-async function callAPIGetSpecificUser() { //i'd prefer to separate the api calls like this for all of them
+async function callAPIGetSpecificUser() { 
     return await fetch(apiBaseURL + `/api/users/${currentUsername}`, option)
         .then(response => {
             if (response.status >= 200 && response.status < 300) {

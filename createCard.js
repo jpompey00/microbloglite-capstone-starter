@@ -37,10 +37,9 @@ function createCard(data, fullName = null, imageSrc = "...") {
     //Profile Images
     const profileImg = document.createElement("img");
     imageAnchor.appendChild(profileImg);
+    //sends to the specific users profile
     imageAnchor.href = `../profile/?username=${data.username}`
-    // imageAnchor.onclick = () => {
 
-    // }
     profileImg.classList.add("card-img-top");
     profileImg.src = imageSrc;
     profileImg.alt = "...";
@@ -75,6 +74,8 @@ function createCard(data, fullName = null, imageSrc = "...") {
 
     const timeOfCreation = document.createElement("p");
     timeOfCreation.classList.add("fst-italic");
+
+    //Converts the Date to a readable format
     let time = Date.parse(data.createdAt);
     const date = new Date(time);
     const twelveHourTimeString = date.toLocaleTimeString('en-US',
@@ -85,7 +86,6 @@ function createCard(data, fullName = null, imageSrc = "...") {
             minute: 'numeric'
         });
     const dateString = `${months[date.getMonth()]}/${date.getDate()}/${date.getFullYear()}`
-    //TODO: The dates are wrong lmao
     let createdAt = `${dateString} ${twelveHourTimeString}`;
     timeOfCreation.innerHTML = `${createdAt}`;
     colDiv2RowDiv1ColDiv2.appendChild(timeOfCreation);
@@ -97,12 +97,6 @@ function createCard(data, fullName = null, imageSrc = "...") {
 
     const heartLink = document.createElement("a");
     heartLink.href = "#";
-    heartLink.onclick = () => {
-        //needs to add a like to the list of likes
-        //then send a signal telling the page to reload?
-        //or send a signal telling the page to update that specific posts listing??
-
-    }
     colDiv3RowDiv1ColDiv2.appendChild(heartLink);
 
 
@@ -133,8 +127,8 @@ function createCard(data, fullName = null, imageSrc = "...") {
     colDiv3RowDiv1ColDiv2.appendChild(numberOfLikesElement);
 
 
-    //FIXME: Need to add catches for all my API calls for when they fail so the website doesn't update.
     let editedPostId;
+    //controls the logic behind accepting a like
     heartImage.onclick = async () => {
         editedPostId = data._id;
         if (heartImage.dataset.liked == "false") {
@@ -161,26 +155,27 @@ function createCard(data, fullName = null, imageSrc = "...") {
     colDiv1RowDiv2ColDiv2.classList.add("col-9");
     rowDiv2ColDiv2.appendChild(colDiv1RowDiv2ColDiv2);
 
-    //Reply function
-    let replyAnchor = createReplyAnchor(data);
+    //Reply function, not exactly working
+    // let replyAnchor = createReplyAnchor(data);
 
     const postTextElement = document.createElement("p");
     postTextElement.classList.add("card-text");
     postTextElement.id = "cardBody";
-    if (typeof replyAnchor == "Node") {
-        postTextElement.appendChild(replyAnchor);
-    }
+
+    // if (typeof replyAnchor == "Node") {
+    //     postTextElement.appendChild(replyAnchor);
+    // }
     let text = document.createTextNode(data.text);
     postTextElement.appendChild(text);
     colDiv1RowDiv2ColDiv2.appendChild(postTextElement);
 
-    //add reply button here
     const colDiv2RowDiv2ColDiv2 = document.createElement("div");
     colDiv2RowDiv2ColDiv2.classList.add("col-3");
     let replyButton = document.createElement("img");
     replyButton.src = "/assets/reply.svg";
     replyButton.width = 30;
     replyButton.height = 30;
+    //logic behding the reply button.
     replyButton.onmouseenter = () => {
         replyButton.src = "/assets/reply-fill.svg"
     }
@@ -200,7 +195,7 @@ function createCard(data, fullName = null, imageSrc = "...") {
     colDiv2RowDiv2ColDiv2.appendChild(replyButton);
     rowDiv2ColDiv2.appendChild(colDiv2RowDiv2ColDiv2);
 
-    //button
+    //Logic Behind Delete Button
     if (data.username == currentUserUsername) {
         const xIconLink = document.createElement("a");
         xIconLink.href = "#";
@@ -243,7 +238,7 @@ function createCard(data, fullName = null, imageSrc = "...") {
 }
 
 
-async function addLikeCall(data) { //FIXME:not exactly working
+async function addLikeCall(data) { 
     let bodyData = {
         "postId": `${data._id}`
     }
@@ -308,8 +303,7 @@ async function removeLikeCall(data) {
 }
 
 function updateLike(data, numberOfLikesElement) {
-    // console.log(data.likes.length);
-    console.log(data);
+
     numberOfLikesElement.innerHTML = ` ${data.likes.length}`;
 }
 
@@ -344,6 +338,7 @@ async function getPostById(postId) {
 }
 
 
+//proud of this one
 function assignPicture(username) {
     //take the first letter of the username
     //conver it to the ascii value

@@ -4,7 +4,11 @@
 
 const loginForm = document.getElementById("loginForm");
 
-
+// {
+//     "username": "testuser0102012301",
+//     "fullName": "testuser0102012301",
+//     "password": "turningupthisweekend"
+//   }
 loginForm.onsubmit = function (event) {
     // Prevent the form from refreshing the page,
     // as it will do by default when the Submit event is triggered:

@@ -2,6 +2,7 @@
 
 "use strict";
 //this was harder than I expected
+//https://github.com/woody180/vanilla-javascript-emoji-picker
 new EmojiPicker({
     trigger: [
         {
@@ -9,16 +10,15 @@ new EmojiPicker({
             insertInto: "#postTextInput"
         }
     ],
-    closeButton : true,
+    closeButton: true,
 });
 
 const cardOutput = document.getElementById("cardOutput");
-// const attatchmentButton = document.getElementById("attatchmentButton");
 const sendButton = document.getElementById("sendButton");
 const xIconElement = document.getElementById("xIconElement");
 const postTextInput = document.getElementById("postTextInput");
 
-//yea
+
 const timeDescending = document.getElementById("timeDescending");
 const timeAscending = document.getElementById("timeAscending");
 const numberOfLikes = document.getElementById("numberOfLikes");
@@ -26,18 +26,26 @@ const numberOfLikes = document.getElementById("numberOfLikes");
 
 window.onload = async () => {
     console.log("connected");
-    
 
 
-    //TODO:how does this work again
+    //makes it so you can rpess enter and the message sends
+    postTextInput.addEventListener("keyup", event => {
+        if (event.key !== "Enter") return;
+        sendButton.click();
+        event.preventDefault();
+    });
+
+
+
+    //Custom Event Listeners
     window.addEventListener("reloadPosts", getPostsApiCall, false);
     window.addEventListener("replyText", (e) => {
         replyToMessage(e.detail.id);
-    } , false )
-  
+    }, false)
+
     //This works, add 300ms wait.
-   setTimeout(populatePosts, 300);
-  
+    setTimeout(populatePosts, 300);
+
     //FIXME: Scroll function works really weird
 
     sendButton.onclick = onSendButtonClick;
@@ -48,40 +56,43 @@ window.onload = async () => {
 
 }
 
-
-function replyToMessage(replyingToString){
+//is just for show at this point.
+function replyToMessage(replyingToString) {
     postTextInput.value = `@${replyingToString} ${postTextInput.value}`;
-    // console.log(replyingToString);
+
 }
 
 
-//Fixed
+//populates the posts to the output
 async function populatePosts(sortedData = null) {
-    let placeholderImage = "../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg";
     let users = await getUsersAPICall();
     let postsData;
     let recentcard;
+    //check's if the data recieved was sorted by the filter
     if (sortedData != null) {
         postsData = sortedData;
     } else {
         postsData = await getPostsApiCall();
-
     }
     cardOutput.innerHTML = "";
+    //displays the most recent at the bottom
     for (let d of postsData.slice().reverse()) {
 
         let noMatches = true;
+        //matches the message with the fullName since that is not recorded
+        //in the posts dataset. If it is not found, it fills the field with the 
+        //username
         for (let u of users) {
             if (d.username == u.username) {
-                recentcard = createCard(d, u.fullName, placeholderImage);
+                recentcard = createCard(d, u.fullName);
                 cardOutput.appendChild(recentcard);
                 noMatches = false;
 
             }
         }
         if (noMatches) {
-            
-            recentcard = createCard(d, d.username, placeholderImage);
+
+            recentcard = createCard(d, d.username);
             cardOutput.appendChild(recentcard);
         }
 
@@ -93,7 +104,8 @@ async function populatePosts(sortedData = null) {
     scrollToBottom();
 }
 
-//I think this works
+//The Api that gets all the posts. How I
+//wanted to implement all the API calls but
 async function getPostsApiCall() {
     let dataToReturn;
     await fetch(apiBaseURL + "/api/posts",
@@ -124,7 +136,7 @@ async function getPostsApiCall() {
     return dataToReturn;
 }
 
-
+//The API that creates all the posts.
 async function createPostApiCall(postString) {
     errorOutputMessage.style = "display: none;";
     let boolOutput;
@@ -148,7 +160,7 @@ async function createPostApiCall(postString) {
     })
         .then(data => {
             boolOutput = true;
-           
+
         })
         .catch(error => {
             errorOutputMessage.style = "display: block;";
@@ -159,10 +171,10 @@ async function createPostApiCall(postString) {
     return boolOutput;
 }
 
-//TODO: have this activate on pressing enter as well
+
 async function onSendButtonClick() {
-    //add more catches for when its blank, like if they add a bunch of spaces with no
-    //characters
+
+    //trims the message sent through so it cannot be blank
     if (postTextInput.value.trim() !== "") {
         if (await createPostApiCall(postTextInput.value)) { //makes sure the fetch has worked before reloading page.
             postTextInput.value = "";
@@ -177,7 +189,7 @@ function scrollToBottom() {
     window.scrollTo(0, document.body.scrollHeight);
 }
 
-//TODO: make sure works
+//the code behind each filter working as it does
 async function filterChange(value) {
     let sortedData = await getPostsApiCall();
     switch (value) {
@@ -198,7 +210,8 @@ async function filterChange(value) {
 }
 
 
-//works
+//null data is here incase there is an error retrieving the data
+//so the program doesn't break
 async function getUsersAPICall() {
     let nullData = [
         {

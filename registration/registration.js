@@ -8,14 +8,9 @@ const termsOfServiceCheckbox = document.getElementById('termsOfServiceCheckbox')
 const emailNotificationCheckbox = document.getElementById('emailNotificationCheckbox');
 const loginButton = document.getElementById('loginButton');
 const errorOutput = document.getElementById("errorOutput");
-//test
-// let bodydata = {
-//     "username": "testuser0102012301",
-//     "fullName": "testuser0102012301",
-//     "password": "turningupthisweekend"
-//   }
 
-  //for the errors
+
+
 let p = document.createElement("p");
  p.classList.add("text-danger", "h5", "text-center");
 
@@ -34,18 +29,17 @@ window.onload = () =>{
 }
 
 //should just work now :D
-//TODO: Have this scroll down to the login section
 function registerUser(bodydata){
     fetch(apiBaseURL + "/api/users",
         {
             method: "POST",
-            body: JSON.stringify(bodydata), //always remember to stringify the body
+            body: JSON.stringify(bodydata), 
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
         })
     .then(response => {
-        // console.log(response.status) //TODO: use this to add catches, throw err and do err code
+       
         if(response.status == 400){
             p.innerHTML = "Hoot! That request ruffled our feathers. Please contact our owlmin team for assistance—they might just make it worse!";
             errorOutput.appendChild(p);
