@@ -1,10 +1,19 @@
 /* Posts Page JavaScript */
 
-
-
 "use strict";
+//this was harder than I expected
+new EmojiPicker({
+    trigger: [
+        {
+            selector: "#emojiButton",
+            insertInto: "#postTextInput"
+        }
+    ],
+    closeButton : true,
+});
+
 const cardOutput = document.getElementById("cardOutput");
-const attatchmentButton = document.getElementById("attatchmentButton");
+// const attatchmentButton = document.getElementById("attatchmentButton");
 const sendButton = document.getElementById("sendButton");
 const xIconElement = document.getElementById("xIconElement");
 const postTextInput = document.getElementById("postTextInput");
@@ -17,21 +26,19 @@ const numberOfLikes = document.getElementById("numberOfLikes");
 
 window.onload = async () => {
     console.log("connected");
+    
 
 
     //TODO:how does this work again
     window.addEventListener("reloadPosts", getPostsApiCall, false);
-    //populatePosts();
+    window.addEventListener("replyText", (e) => {
+        replyToMessage(e.detail.id);
+    } , false )
+  
     //This works, add 300ms wait.
    setTimeout(populatePosts, 300);
   
-
-    //FIXME: This needs to scroll to the bottom, it only does that if save this document
-    //when i'm not on the page. See Solution in PopulatePostAPICall
-    //FIXME: the display of the posts in reverse when this is resolved
-    //Use an Anchor.
-
-
+    //FIXME: Scroll function works really weird
 
     sendButton.onclick = onSendButtonClick;
 
@@ -42,19 +49,15 @@ window.onload = async () => {
 }
 
 
-
-function onXIconElementMouseEnter() {
-    xIconElement.src = "../assets/x-circle-fill.svg";
-}
-
-function onXIconElementMouseLeave() {
-    xIconElement.src = "../assets/x-circle.svg";
+function replyToMessage(replyingToString){
+    postTextInput.value = `@${replyingToString} ${postTextInput.value}`;
+    // console.log(replyingToString);
 }
 
 
 //Fixed
 async function populatePosts(sortedData = null) {
-
+    let placeholderImage = "../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg";
     let users = await getUsersAPICall();
     let postsData;
     let recentcard;
@@ -70,20 +73,23 @@ async function populatePosts(sortedData = null) {
         let noMatches = true;
         for (let u of users) {
             if (d.username == u.username) {
-                recentcard = createCard(d, u.fullName);
+                recentcard = createCard(d, u.fullName, placeholderImage);
                 cardOutput.appendChild(recentcard);
                 noMatches = false;
 
             }
         }
         if (noMatches) {
-            recentcard = createCard(d, d.username);
+            
+            recentcard = createCard(d, d.username, placeholderImage);
             cardOutput.appendChild(recentcard);
         }
 
     }
 
     //issue: Is scrolling once, then again when reloaded. Its a bit jarring.
+    //issue: scrolls halfway the first time?
+    console.log("scrolled");
     scrollToBottom();
 }
 
@@ -142,7 +148,7 @@ async function createPostApiCall(postString) {
     })
         .then(data => {
             boolOutput = true;
-            // console.log(data);
+           
         })
         .catch(error => {
             errorOutputMessage.style = "display: block;";
@@ -165,7 +171,7 @@ async function onSendButtonClick() {
     }
 }
 
-//TODO: Fix
+//TODO: MOTION SICKNESS WARNING
 function scrollToBottom() {
 
     window.scrollTo(0, document.body.scrollHeight);

@@ -27,9 +27,10 @@ const profileUserNameInputBox = document.getElementById("profileUserNameInputBox
 const changePasswordInputBox = document.getElementById("changePasswordInputBox");
 const confirmChangePasswordInputBox = document.getElementById("confirmChangePasswordInputBox");
 
+let loggedInUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 let currentUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 let currentUserFullName;
-
+let placeholderImage = "../images/default-avatar-photo-placeholder-profile-picture-vector-3708684430.jpg";
 
 
 let option = {
@@ -39,26 +40,34 @@ let option = {
     }
 }
 
-//TODO:
-//NOT STYLING HOW I WANT IT. ASK! 
-//LAST ROUND OF FORMATTING!
-//Fix the posts not updating when I like or unlike a post.
-//Edit the profile 
+
 window.onload = () => {
+    const urlParams = new URLSearchParams(location.search);
+
+    //loads other pages. I'm so good
+    if (urlParams.has("username") == true) {
+        currentUsername = urlParams.get("username");
+    }
+
     //not sure why i need "false" here
     window.addEventListener("reloadPosts", loadPosts, false);
     // console.log(testUsername);
-    console.log("connected");
+
     loadFullName();
     loadPersonalInfo();
 
     setTimeout(loadPosts, 300);
     setTimeout(loadLikedPosts, 300);
 
-
-    //button events
-    editProfileInfoButton.onclick = onEditProfileInfoButtonClick;
-    saveEditedInfoButton.onclick = onSaveEditedInfoButtonClick;
+    if (currentUsername != loggedInUsername) {
+        editProfileInfoButton.style = "display: none";
+        createPostButton.style = "display: none";
+    }
+    else {
+        //button events
+        editProfileInfoButton.onclick = onEditProfileInfoButtonClick;
+        saveEditedInfoButton.onclick = onSaveEditedInfoButtonClick;
+    }
 }
 
 
@@ -86,7 +95,7 @@ function onSaveEditedInfoButtonClick() {
     let body = {
         "password": `${changePasswordInputBox.value}`,
         "fullName": `${profileFullNameInputBox.value}`,
-        "bio" : `${bioInputBox.value}`
+        "bio": `${bioInputBox.value}`
     }
     updateUser(currentUsername, body);
     //need a function to update the page.
@@ -94,8 +103,8 @@ function onSaveEditedInfoButtonClick() {
 
 
 
-async function updateUser(username, body){
-    fetch(apiBaseURL + "/api/users/" + username , {
+async function updateUser(username, body) {
+    fetch(apiBaseURL + "/api/users/" + username, {
         method: "PUT",
         body: JSON.stringify(body),
         headers: {
@@ -103,31 +112,31 @@ async function updateUser(username, body){
             "Content-type": "application/json; charset=UTF-8"
         }
     })
-    .then(response => {
-        if(response.status >=200 && response.status < 300){
-            return response.json();       
-        } else {
-            throw error;
-        }
-    })
-    .then(data => {
-        errorOutputMessage.style = "display: none";
-        console.log(data);
+        .then(response => {
+            if (response.status >= 200 && response.status < 300) {
+                return response.json();
+            } else {
+                throw error;
+            }
+        })
+        .then(data => {
+            errorOutputMessage.style = "display: none";
+            console.log(data);
 
-    }) 
-    .catch(error => { //doesn't tell you what the issue is entirely
-        errorOutputMessage.style = "display: block";
-        errorOutputMessage.innerHTML = "Trouble Updating User";
+        })
+        .catch(error => { //doesn't tell you what the issue is entirely
+            errorOutputMessage.style = "display: block";
+            errorOutputMessage.innerHTML = "Trouble Updating User";
 
-    })
+        })
 }
 
 
 //so other functions can access the firstName without needing to call this API themselves or looping
 //through the user array to find it.
-async function loadFullName() { 
+async function loadFullName() {
     let users = await getUsersAPI();
-    if(!users){
+    if (!users) {
         // console.log("test?")
         errorOutputMessage.style = "display: block";
         errorOutputMessage.innerHTML = "Whoops! Our owls are having trouble finding your name. It might be hiding in the treetops—try again later!";
@@ -144,7 +153,7 @@ async function loadFullName() {
 
 async function loadPersonalInfo() {
     let data = await callAPIGetSpecificUser();
-    if(!data){
+    if (!data) {
         profileFullNameTextBox.innerHTML = "";
         profileUsernameTextbox.innerHTML = "";
         memberSinceTextBox.innerHTML = "";
@@ -155,6 +164,8 @@ async function loadPersonalInfo() {
         editProfileInfoButton.disabled = true;
         return
     }
+    console.log(data);
+    profileImageElement.src = assignPicture(data.username);
     // console.log(typeof (data.fullName));
     profileFullNameTextBox.innerHTML = data.fullName;
     //maybe have this an achor to take you to other pages.
@@ -171,7 +182,7 @@ async function loadPersonalInfo() {
     const dateString = `${months[date.getMonth()]}/${date.getDate()}/${date.getFullYear()}`
     let createdAt = `${dateString} ${twelveHourTimeString}`;
 
-    memberSinceTextBox.innerHTML =`Joined:  ${createdAt}` ;
+    memberSinceTextBox.innerHTML = `Joined:  ${createdAt}`;
 
     // console.log(data.bio);
     bioOutputTextBox.innerHTML = data.bio;
@@ -179,10 +190,10 @@ async function loadPersonalInfo() {
 }
 
 async function loadPosts() {
-    
+
     let data = await callAPIGetPosts();
     postsOutputContainer.innerHTML = "";
-    if(!data){
+    if (!data) {
         let p = document.createElement("p");
         p.classList.add("text-danger", "h5")
         p.innerHTML = "Whoops-a-daisy! Your post got tangled in the owl's nest. Give it another hoot!";
@@ -190,21 +201,21 @@ async function loadPosts() {
         return
     }
     for (let d of data) {
-        
+
         if (d.username == currentUsername) {
 
             postsOutputContainer.appendChild(
-                createCard(d, currentUserFullName)
+                createCard(d, currentUserFullName, placeholderImage)
             );
         }
     }
 }
 
 async function loadLikedPosts() {
-    
+
     let data = await callAPIGetPosts();
     likedPostsOutputContainer.innerHTML = "";
-    if(!data){
+    if (!data) {
         let p = document.createElement("p");
         p.classList.add("text-danger", "h5")
         p.innerHTML = "Whoops-a-daisy! Your post got tangled in the owl's nest. Give it another hoot!";
@@ -215,7 +226,7 @@ async function loadLikedPosts() {
         for (let l of d.likes) {
             if (l.username == currentUsername) {
                 //will need its own card for this too
-                likedPostsOutputContainer.appendChild(createCard(d, currentUserFullName));
+                likedPostsOutputContainer.appendChild(createCard(d, currentUserFullName, placeholderImage));
 
             }
         }
@@ -225,16 +236,17 @@ async function loadLikedPosts() {
 async function callAPIGetPosts() {
     return await fetch(apiBaseURL + `/api/posts`, option)
         .then(response => {
-            if(response.status >=200 && response.status < 300){
-                return response.json();       
+            if (response.status >= 200 && response.status < 300) {
+                return response.json();
             } else {
                 throw error;
             }
         })
         .then(data => {
-           
-           
-            return data})
+
+
+            return data
+        })
         .catch(error => {
             return null;
         })
@@ -243,8 +255,8 @@ async function callAPIGetPosts() {
 async function callAPIGetSpecificUser() { //i'd prefer to separate the api calls like this for all of them
     return await fetch(apiBaseURL + `/api/users/${currentUsername}`, option)
         .then(response => {
-            if(response.status >=200 && response.status < 300){
-                return response.json();       
+            if (response.status >= 200 && response.status < 300) {
+                return response.json();
             } else {
                 throw error;
             }
@@ -258,13 +270,13 @@ async function callAPIGetSpecificUser() { //i'd prefer to separate the api calls
 async function getUsersAPI() {
     return await fetch(apiBaseURL + '/api/users', option)
         .then(response => {
-            if(response.status >=200 && response.status < 300){
-                return response.json();       
+            if (response.status >= 200 && response.status < 300) {
+                return response.json();
             } else {
                 throw error;
             }
         })
-        .then(data =>data)
+        .then(data => data)
         .catch(error => {
             return null
         })

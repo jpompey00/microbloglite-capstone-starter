@@ -1,3 +1,6 @@
+//BUG, url search param doesn't work with the name #FreeToryLanez? 
+//Name isn't searchable in postman either As far as I can tell
+//It returns every user??
 
 const months = [
     "January", "February", "March", "April", "May", "June",
@@ -9,6 +12,9 @@ const errorOutputMessage = document.getElementById("errorOutputMessage");
 
 //I hate this
 function createCard(data, fullName = null, imageSrc = "...") {
+
+    let imageAnchor = document.createElement("a");
+    imageSrc = assignPicture(data.username);
     currentUserUsername = JSON.parse(window.localStorage.getItem("login-data")).username;
 
     const cardDiv = document.createElement("div");
@@ -27,12 +33,19 @@ function createCard(data, fullName = null, imageSrc = "...") {
     colDiv1RowDiv1.classList.add("col-2");
     rowDiv1CardBody.appendChild(colDiv1RowDiv1);
 
+
     //Profile Images
     const profileImg = document.createElement("img");
+    imageAnchor.appendChild(profileImg);
+    imageAnchor.href = `../profile/?username=${data.username}`
+    // imageAnchor.onclick = () => {
+
+    // }
     profileImg.classList.add("card-img-top");
     profileImg.src = imageSrc;
     profileImg.alt = "...";
-    colDiv1RowDiv1.appendChild(profileImg);
+    colDiv1RowDiv1.appendChild(imageAnchor);
+
 
     const colDiv2RowDiv1 = document.createElement("div");
     colDiv2RowDiv1.classList.add("col");
@@ -135,7 +148,7 @@ function createCard(data, fullName = null, imageSrc = "...") {
             heartImage.setAttribute("data-liked", false);
             await removeLikeCall(data);
         }
-        data = await updateDataFetch(editedPostId);
+        data = await getPostById(editedPostId);
         updateLike(data, numberOfLikesElement);
     }
 
@@ -148,14 +161,43 @@ function createCard(data, fullName = null, imageSrc = "...") {
     colDiv1RowDiv2ColDiv2.classList.add("col-9");
     rowDiv2ColDiv2.appendChild(colDiv1RowDiv2ColDiv2);
 
+    //Reply function
+    let replyAnchor = createReplyAnchor(data);
+
     const postTextElement = document.createElement("p");
     postTextElement.classList.add("card-text");
     postTextElement.id = "cardBody";
-    postTextElement.innerHTML = data.text;
+    if (typeof replyAnchor == "Node") {
+        postTextElement.appendChild(replyAnchor);
+    }
+    let text = document.createTextNode(data.text);
+    postTextElement.appendChild(text);
     colDiv1RowDiv2ColDiv2.appendChild(postTextElement);
 
+    //add reply button here
     const colDiv2RowDiv2ColDiv2 = document.createElement("div");
     colDiv2RowDiv2ColDiv2.classList.add("col-3");
+    let replyButton = document.createElement("img");
+    replyButton.src = "/assets/reply.svg";
+    replyButton.width = 30;
+    replyButton.height = 30;
+    replyButton.onmouseenter = () => {
+        replyButton.src = "/assets/reply-fill.svg"
+    }
+    replyButton.onmouseleave = () => {
+        replyButton.src = "/assets/reply.svg"
+    }
+    replyButton.onclick = () => {
+        //need an event listener here
+        let replyTextEvent = new CustomEvent("replyText", {
+            detail: {
+                id: data.username
+            }
+        })
+        dispatchEvent(replyTextEvent);
+    }
+
+    colDiv2RowDiv2ColDiv2.appendChild(replyButton);
     rowDiv2ColDiv2.appendChild(colDiv2RowDiv2ColDiv2);
 
     //button
@@ -215,7 +257,7 @@ async function addLikeCall(data) { //FIXME:not exactly working
             }
         })
         .then(response => {
-            if(response.status != 201){
+            if (response.status != 201) {
                 throw error;
             } else {
                 return response.json();
@@ -245,7 +287,7 @@ async function removeLikeCall(data) {
                     }
                 })
                 .then(response => {
-                    if(response.status != 202){
+                    if (response.status != 202) {
                         throw error;
                     } else {
                         return response.json();
@@ -272,7 +314,7 @@ function updateLike(data, numberOfLikesElement) {
 }
 
 
-async function updateDataFetch(postId) {
+async function getPostById(postId) {
     let returnData;
     await fetch(apiBaseURL + `/api/posts/${postId}`, {
 
@@ -282,8 +324,8 @@ async function updateDataFetch(postId) {
             "Content-type": "application/json; charset=UTF-8"
         }
     })
-        .then(response =>{
-            if(response.status != 200){
+        .then(response => {
+            if (response.status != 200) {
                 throw error;
             } else {
                 return response.json();
@@ -299,4 +341,72 @@ async function updateDataFetch(postId) {
         })
 
     return returnData;
+}
+
+
+function assignPicture(username) {
+    //take the first letter of the username
+    //conver it to the ascii value
+    //if the value is between 0 and 9 assign a value
+    //if its over 9, mod the number by 9 then assign it a value
+
+    let number = username.charCodeAt(0) % 9
+    let image = `../images/placeholder_profile_images/image${number}.jpeg`
+    return image;
+}
+
+
+
+
+//find index of space after the first character if
+//the first character is an @
+//record that into a string
+//thats the post id
+//set the post id to the href of the anchor
+//set the post id to the innerhtml of the anchor
+//set the rest of the message to the textNode
+//not working as intended Would fix
+async function createReplyAnchor(data) {
+    let option = {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem("login-data")).token}`,
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    };
+    let replyAnchor = document.createElement("a");
+    let postMessage = data.text;
+    if (postMessage[0] == '@' && postMessage.indexOf(" ") != -1) {
+        let string = postMessage.slice(0, postMessage.indexOf(" "));
+
+        let messageId = string.slice(1);
+
+        replyAnchor.href = `#${messageId}`;
+
+        // console.log(apiBaseURL + `/api/posts/${messageId}`);
+        let messageUsername = await fetch(apiBaseURL + `/api/posts/${messageId}`, option)
+            .then(response => {
+                if (response.status != 200) {
+                    throw error;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                // console.log("completed");
+                returnData = data;
+
+            })
+            .catch(error => {
+                return
+            })
+
+            console.log(messageUsername);
+        replyAnchor.innerHTML = `@TestPlease `
+
+    }
+
+    console.log(replyAnchor);
+    return replyAnchor;
+
 }
