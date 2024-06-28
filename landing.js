@@ -25,5 +25,6 @@ loginForm.onsubmit = function (event) {
     loginForm.loginButton.disabled = true;
 
     // Time to actually process the login using the function from auth.js!
+    //doesn't return any feedback if there is wrong info send, oops!
     login(loginData);
 };

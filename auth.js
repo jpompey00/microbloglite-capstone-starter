@@ -32,7 +32,8 @@ function isLoggedIn () {
 // landing page, in order to process a user's login. READ this code,
 // and feel free to re-use parts of it for other `fetch()` requests
 // you may need to write.
-function login (loginData) {
+async function login (loginData) {
+    
     // POST /auth/login
     const options = { 
         method: "POST",
@@ -45,7 +46,7 @@ function login (loginData) {
         body: JSON.stringify(loginData),
     };
 
-    return fetch(apiBaseURL + "/auth/login", options)
+     return await fetch(apiBaseURL + "/auth/login", options)
         .then(response => response.json())
         .then(loginData => {
             if (loginData.message === "Invalid username or password") {
