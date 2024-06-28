@@ -29,9 +29,9 @@
     <!-- Run BEFORE page is finished loading (before window.onload - don't add the `defer` attribute): -->
     <!--May not Need-->
     <script src="../auth.js"></script>
-    <!-- <script>
-        // if (isLoggedIn() === true) window.location.replace("/posts");
-    </script> -->
+    <script>
+        if (isLoggedIn() === true) window.location.replace("/posts");
+    </script>
 </head>
 
 <body>
@@ -70,32 +70,32 @@
 
                 </div>
                 <div class="col d-flex justify-content-center rounded mb-4 p-3 pb-4" style="background-color: #2451C6;">
-                    <form id="registration ">
+                    <form id="registration">
                         <div id="errorOutput" style="display: inline;">
                             <p class="text-center h5 text-white">Ollie is watching</p>
                         </div>
                         <div class="form-floating my-3">
-                            <input type="text" class="form-control" id="usernameInputBox" placeholder="Username">
-                            <label for="usernameInputBox">Enter Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Username" minlength="3">
+                            <label for="username" >Enter Username</label>
                         </div>
                         <div class="form-floating my-3">
-                            <input type="text" class="form-control" id="fullNameInputBox" placeholder="John Doe">
-                            <label for="fullNameInputBox">Enter Full Name</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="John Doe">
+                            <label for="fullName">Enter Full Name</label>
                         </div>
                         <div class="form-floating my-3">
-                            <input type="password" class="form-control" id="enterPasswordInputBox"
-                                placeholder="Password">
-                            <label for="enterPasswordInputBox">Enter New Password</label>
+                            <input type="password" class="form-control" id="password"
+                                placeholder="Password" minlength="5">
+                            <label for="password">Enter New Password</label>
                         </div>
                         <div class="form-floating">
                             <input type="password" class="form-control" id="confirmPasswordInputBox"
-                                placeholder="Password">
+                                placeholder="Password" minlength="5">
                             <label for="confirmPasswordInputBox">Confirm New Password</label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="termsOfServiceCheckbox"
-                                required>
+                                >
                             <label class="form-check-label" for="flexCheckDefault">
                                 Accept the Terms of Service
                             </label>
